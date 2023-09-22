@@ -1,58 +1,138 @@
-import React, { useState } from 'react'
+// import React, { useState } from 'react'
+// import useAppDispatch from '../../hooks/useAppDispatch';
+// import { userLogin } from '../../redux/reducers/authenticationReducer';
+
+// interface DecodedToken {
+//   name: string;
+// }
+
+// const Login = () => {
+// const [email, setEmail] = useState("");
+// const [password, setPassword] = useState("");
+// const [error, setError] = useState("");
+// const [isLoggedIn, setIsLoggedIn] = useState(false);
+// const dispatch = useAppDispatch();
+
+//   const handleLogin = async () => {
+//     try {
+//       console.log("Logging in...");
+//       await dispatch(userLogin({ email, password })).unwrap();
+//       setIsLoggedIn(true);
+//       window.location.href = "/";
+//     } catch (error) {
+//       setError("Login failed. Please try again.");
+//     }
+//   };
+
+//   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+//     e.preventDefault();
+//     if (!email || !password) {
+//       setError("Username and password are required");
+//     } else {
+//       handleLogin();
+//     }
+//   };
+
+//   return (
+//     <form onSubmit={handleSubmit}>
+//           <input
+//             type="text"
+//             name="email"
+//             placeholder="Email"
+//             value={email}
+//             onChange={(e) => setEmail(e.target.value)}
+//           />
+//           <input
+//             type="password"
+//             name="password"
+//             placeholder="Password"
+//             value={password}
+//             onChange={(e) => setPassword(e.target.value)}
+//           />
+//           <button>Login</button>
+//           {error && <p>{error}</p>}
+//         </form>
+//   )
+// }
+
+// export default Login
+
+import React, { useState } from 'react';
 import useAppDispatch from '../../hooks/useAppDispatch';
 import { userLogin } from '../../redux/reducers/authenticationReducer';
-
-interface DecodedToken {
-  name: string;
-}
+import { TextField, Button, Typography, Box } from '@mui/material';
 
 const Login = () => {
-const [email, setEmail] = useState("");
-const [password, setPassword] = useState("");
-const [error, setError] = useState("");
-const [isLoggedIn, setIsLoggedIn] = useState(false);
-const dispatch = useAppDispatch();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const dispatch = useAppDispatch();
 
   const handleLogin = async () => {
     try {
-      console.log("Logging in...");
+      console.log('Logging in...');
       await dispatch(userLogin({ email, password })).unwrap();
       setIsLoggedIn(true);
-      window.location.href = "/";
+      window.location.href = '/';
     } catch (error) {
-      setError("Login failed. Please try again.");
+      setError('Login failed. Please try again.');
     }
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!email || !password) {
-      setError("Username and password are required");
+      setError('Username and password are required');
     } else {
       handleLogin();
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-          <input
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="100vh"
+    >
+      <div className="login-box">
+        <Typography variant="h5" gutterBottom>
+          Login
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <TextField
             type="text"
+            label="Email"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             name="email"
-            placeholder="Email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
-          <input
+          <TextField
             type="password"
+            label="Password"
+            variant="outlined"
+            fullWidth
+            margin="normal"
             name="password"
-            placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button>Login</button>
-          {error && <p>{error}</p>}
+          <Button type="submit" variant="contained" color="primary" fullWidth>
+            Login
+          </Button>
+          {error && (
+            <Typography variant="body2" color="error" style={{ marginTop: '10px' }}>
+              {error}
+            </Typography>
+          )}
         </form>
-  )
-}
+      </div>
+    </Box>
+  );
+};
 
-export default Login
+export default Login;
