@@ -42,6 +42,13 @@ const BookCard: React.FC<BookCardProps> = ({ book, setCartItemCount }) => {
     },
   };
 
+  const detailsButtonStyle = {
+    position: "absolute",
+    bottom: 0,
+    left: "50%",
+    transform: "translateX(-50%)", // Center the button horizontally
+  };
+
   return (
     <Box sx={cardStyle}>
       <Card sx={{ height: '100%' }}>
@@ -55,7 +62,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, setCartItemCount }) => {
           title={book.title}
         />
         <CardContent sx={{ flexGrow: 1 }}>
-          <Typography gutterBottom variant="h5" component="div">
+          <Typography gutterBottom variant="h6" component="div">
             {book.title}
           </Typography>
         </CardContent>
