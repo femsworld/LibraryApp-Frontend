@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useAppDispatch from '../../hooks/useAppDispatch';
 import useAppSelector from '../../hooks/useAppSelector';
 import { FetchQuery, SortBooks, fetchAllBooks, fetchAllBooksQuery, fetchBooksByGenre } from '../../redux/reducers/booksReducer';
@@ -60,6 +60,10 @@ const handleSearch = (searchString: string) => {
   setSearchString(searchString);
 };
 
+// const updateCartItemCount = (e : number) => {
+//   setCartItemCount(e)
+// }
+
 return (
   <>
     <Header handleSearch={handleSearch} />
@@ -76,7 +80,7 @@ return (
         <Grid sx={{ flexGrow: 1 }} container spacing={2}>
           <Grid item xs={12}>
             <Grid container justifyContent="center" spacing={spacing}>
-              {books.map((book) => (
+              {books && books.map((book) => (
                 <Grid key={book.title} item>
                   <BookCard book={book} setCartItemCount={setCartItemCount} />
                 </Grid>

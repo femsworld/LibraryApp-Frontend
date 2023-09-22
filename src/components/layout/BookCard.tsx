@@ -1,3 +1,4 @@
+import React from "react";
 import { useDispatch } from "react-redux";
 import { Book } from "../../types/Book";
 import useAppSelector from "../../hooks/useAppSelector";
@@ -16,6 +17,7 @@ import Box from '@mui/material/Box';
 interface BookCardProps {
   book: Book;
   setCartItemCount: React.Dispatch<React.SetStateAction<number>>;
+  // setCartItemCount: (e: number) => void;
 }
 
 const BookCard: React.FC<BookCardProps> = ({ book, setCartItemCount }) => {
