@@ -7,7 +7,7 @@ interface AdminRouteProps {
 }
 
 const PrivateRoute: React.FC<AdminRouteProps> = ({isAuthenticated, userRole} ) => {
-  return isAuthenticated && userRole == "Admin" ? <Outlet></Outlet> : <Navigate to="/login" />
+  return isAuthenticated && userRole === "Admin" ? <Outlet></Outlet> : <Navigate to="/login" />
 }
 
 export default PrivateRoute
