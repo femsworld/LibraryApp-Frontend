@@ -26,6 +26,7 @@ export const fetchAllUsersLoan = createAsyncThunk(
   "fetchAllUsersLoan",
   async ({ userId }: fetchAllUsersLoanQuery) => {
     try {
+      console.log("fetchAllUsersLoan: ", userId)
       const result = await axios.get<{ loans: Loan[] }>(
         `${baseApi}/Loans/user/${userId}`,
         { headers: { Authorization: `Bearer ${resultToken}` } }

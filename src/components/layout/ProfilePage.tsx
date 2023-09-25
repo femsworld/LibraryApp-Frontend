@@ -13,11 +13,14 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { Loan } from '../../types/Loan';
+import { fetchAllBooks, fetchAllBooksQuery } from '../../redux/reducers/booksReducer';
 
 const userloans = localStorage.getItem('userLoans');
 const loans = userloans && JSON.parse(userloans);
+const allBooks = localStorage.getItem('allBooks');
+const books = allBooks && JSON.parse(allBooks);
 
-function createData(id: string, loanBooks: []) {
+function createData(id: string, loanBooks: [{bookId: string, title: string}]) {
   return {
     id,
     details: loanBooks
@@ -57,14 +60,22 @@ function Row(props: { row: ReturnType<typeof createData> }) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
+                    <TableCell>Index</TableCell>
                     <TableCell>Book ID</TableCell>
+                    <TableCell>Book Title</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.details.map((detailsRow: {bookId: string}) => (
+                  {row.details.map((detailsRow: {bookId: string, title: string}, index: number) => (
                     <TableRow key={detailsRow.bookId}>
                       <TableCell component="th" scope="row">
+                        {index+1}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
                         {detailsRow.bookId}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        {detailsRow.title}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -78,13 +89,26 @@ function Row(props: { row: ReturnType<typeof createData> }) {
   );
 }
 
-const rows = loans && loans.map((loan: {id: string, loanBooks: []}) => {
-  return createData(loan.id, loan.loanBooks)
+const rows = loans && books && loans.map((loan: {id: string, loanBooks: [{bookId: string, title: string}]}) => {
+  const loanBooks = loan.loanBooks
+  for (const loan of loanBooks) {
+    for (const book of books) {
+      if(loan.bookId === book.id){
+        loan.title = book.title
+      }
+    }
+  }
+
+  return createData(loan.id, loanBooks)
 });
 
 const ProfilePage = () => {
   const dispatch = useAppDispatch();
-  // const loans = useAppSelector((state) => state.loansReducer.loans);
+  
+  const [paginationQuery, setPaginationQuery] = useState<fetchAllBooksQuery>({
+    page: 0,
+    pageSize: 5,
+  });
   const { currentUser, loading, error } = useAppSelector((state) => state.userReducer);
   const loans = useAppSelector((state) => state.loansReducer.loans);
   const [searchString, setSearchString] = useState("");
@@ -93,13 +117,9 @@ const ProfilePage = () => {
     setSearchString(searchString);
   };
 
-  // const getAllUserLoan = () => {
-  //   dispatch(fetchAllUsersLoan({ userId: currentUser?.id }))
-  //   console.log("List of loans", loans)
-  // }
-
   useEffect(() => {
     dispatch(fetchLoggedInUserProfile());
+    dispatch(fetchAllBooks(paginationQuery));
     dispatch(fetchAllUsersLoan({ userId: currentUser?.id }))
   }, []);
 

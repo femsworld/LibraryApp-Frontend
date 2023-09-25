@@ -102,6 +102,7 @@ export const fetchAllBooks = createAsyncThunk(
       }
 
       const result = await axios.get<{ books: Book[] }>(endpoint);
+      localStorage.setItem('allBooks', JSON.stringify(result.data.books));
       return result.data;
     } catch (e) {
       const error = e as AxiosError;
