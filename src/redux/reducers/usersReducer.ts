@@ -29,7 +29,8 @@ const initialState: UserReducer = {
     avatar: "",
     password: "",
     role: "Client",
-    age: 0
+    age: 0,
+    id: ""
   },
 };
 

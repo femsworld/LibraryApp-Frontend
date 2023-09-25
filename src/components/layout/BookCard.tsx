@@ -17,7 +17,6 @@ import Box from '@mui/material/Box';
 interface BookCardProps {
   book: Book;
   setCartItemCount: React.Dispatch<React.SetStateAction<number>>;
-  // setCartItemCount: (e: number) => void;
 }
 
 const BookCard: React.FC<BookCardProps> = ({ book, setCartItemCount }) => {
@@ -29,12 +28,13 @@ const BookCard: React.FC<BookCardProps> = ({ book, setCartItemCount }) => {
     setCartItemCount(prevCount => prevCount + 1);
   };
 
-  // Define styles for default and hover states
   const cardStyle = {
-    width: 180,
+    width: 190,
     height: '100%',
     display: 'flex',
     flexDirection: 'column',
+    // justifyContent: 'center', // Center content vertically
+    // alignItems: 'center', // Center content horizontally
     transition: 'transform 0.2s',
     '&:hover': {
       transform: 'scale(1.05)',
@@ -63,7 +63,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, setCartItemCount }) => {
         />
         <CardContent sx={{ flexGrow: 1 }}>
           <Typography gutterBottom variant="h6" component="div">
-            {book.title}
+            {book.title.length > 12 ? `${book.title.substring(0, 12)}...` : book.title}
           </Typography>
         </CardContent>
         <CardActions>
@@ -80,4 +80,3 @@ const BookCard: React.FC<BookCardProps> = ({ book, setCartItemCount }) => {
 }
 
 export default BookCard;
-

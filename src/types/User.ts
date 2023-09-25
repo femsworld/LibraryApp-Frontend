@@ -5,5 +5,5 @@ export interface User{
     role: "Admin" | "Client" | "Librarian",
     avatar: string
     password: string
-    
+    id: string
 }
