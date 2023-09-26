@@ -62,6 +62,7 @@ export default function DashBoardBookTable() {
           <EditBook id={params.row.id} />
           <span style={{ marginRight: "15px" }}></span>
           <Button
+            size="large"
             variant="outlined"
             color="primary"
             onClick={() => openDeleteDialog({ id: params.row.id as string, title: params.row.title as string })}

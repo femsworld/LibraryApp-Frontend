@@ -11,9 +11,10 @@ import { fetchAllUsersLoan } from '../../redux/reducers/loansReducer';
 import { LoanBook } from '../../types/LoanBook';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Box, Collapse, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import { Loan } from '../../types/Loan';
 import { fetchAllBooks, fetchAllBooksQuery } from '../../redux/reducers/booksReducer';
+import { Container } from '@mui/system';
 
 const userloans = localStorage.getItem('userLoans');
 const loans = userloans && JSON.parse(userloans);
@@ -124,9 +125,10 @@ const ProfilePage = () => {
   }, []);
 
   return (
-    <div>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Header handleSearch={handleSearch} />
-      <Card style={{ maxWidth: '400px', marginTop: "5rem" }}>
+      <Container style={{ display: 'flex', justifyContent: 'space-between', maxWidth: '800px', marginTop: "5rem" }}>
+      <Card style={{ margin: '0 1rem' }}>
         <CardContent>
           <Typography variant="h5" component="div">
             ProfilePage
@@ -151,13 +153,28 @@ const ProfilePage = () => {
               <Typography variant="body1" gutterBottom>
                 Role: {currentUser?.role}
               </Typography>
-              <img src={currentUser?.avatar} alt="Avatar" />
+              <img src={currentUser?.avatar} alt="Avatar" style={{ maxWidth: '100%', height: 'auto' }} />
+              <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
+              {/* <div> */}
+              <Button 
+              size="small"
+              variant="outlined" 
+              color="primary" 
+              style={{ alignItems: 'center' }}>Update
+              </Button>
+              <span style={{ marginRight: "5px" }}></span>
+              <Button 
+              size="small"
+              variant="outlined" 
+              color="primary" 
+              style={{ alignItems: 'center' }}>Change Password</Button>
+              </div>
             </div>
           )}
         </CardContent>
       </Card>
       {/* Display the loans in a table */}
-      <TableContainer component={Paper}>
+      <TableContainer component={Paper} >
         <Table aria-label="collapsible table">
           <TableHead>
             <TableRow>
@@ -172,6 +189,7 @@ const ProfilePage = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      </Container>
     </div>
   );
 };
