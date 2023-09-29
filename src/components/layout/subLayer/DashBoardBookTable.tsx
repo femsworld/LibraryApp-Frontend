@@ -11,10 +11,10 @@ import { Button, Container, Dialog, DialogTitle, DialogContent, DialogActions } 
 import EditBook from "./EditBook";
 
 export default function DashBoardBookTable() {
+  const dispatch = useAppDispatch();
   const { books, loading, totalPages } = useAppSelector(
     (state) => state.booksReducer
   );
-  const dispatch = useAppDispatch();
   const [paginationQuery, setPaginationQuery] = useState<fetchAllBooksQuery>({
     page: 0,
     pageSize: 5,
@@ -28,7 +28,6 @@ export default function DashBoardBookTable() {
     if (bookId) {
       await dispatch(deleteBook(bookId));
       setSelectedBookId(null);
-      console.log(`Deleting Book: ${bookId}`);
     }
   };
 
@@ -62,7 +61,6 @@ export default function DashBoardBookTable() {
           <EditBook id={params.row.id} />
           <span style={{ marginRight: "15px" }}></span>
           <Button
-            size="large"
             variant="outlined"
             color="primary"
             onClick={() => openDeleteDialog({ id: params.row.id as string, title: params.row.title as string })}
