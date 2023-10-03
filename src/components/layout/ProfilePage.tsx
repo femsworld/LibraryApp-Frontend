@@ -20,15 +20,14 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 
-const userloans = localStorage.getItem('userLoans');
-const loans = userloans && JSON.parse(userloans);
-const allBooks = localStorage.getItem('allBooks');
-const books = allBooks && JSON.parse(allBooks);
+// const allBooks = localStorage.getItem('allBooks');
+// const books = allBooks && JSON.parse(allBooks);
 
-function createData(id: string, loanBooks: [{bookId: string, title: string}]) {
+// function createData(id: string, loanBooks: [{bookId: string, bookTitle: string}]) {
+  function createData(loan: Loan) {
   return {
-    id,
-    details: loanBooks
+    id: loan.id,
+    details: loan.loanBooks
   }
 }
 
@@ -79,7 +78,7 @@ function Row(props: { row: ReturnType<typeof createData>, openDialog: (loan: { i
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.details.map((detailsRow: {bookId: string, title: string}, index: number) => (
+                  {row.details.map((detailsRow: {bookId: string, bookTitle?: string}, index: number) => (
                     <TableRow key={detailsRow.bookId}>
                       <TableCell component="th" scope="row">
                         {index+1}
@@ -88,7 +87,8 @@ function Row(props: { row: ReturnType<typeof createData>, openDialog: (loan: { i
                         {detailsRow.bookId}
                       </TableCell>
                       <TableCell component="th" scope="row">
-                        {detailsRow.title}
+                        {/* {detailsRow.bookTitle} */}
+                        {detailsRow.bookTitle || "N/A"}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -101,6 +101,12 @@ function Row(props: { row: ReturnType<typeof createData>, openDialog: (loan: { i
     </>
   );
 }
+const userloans = localStorage.getItem('userLoans');
+const loans = userloans && JSON.parse(userloans);
+
+const rows = loans.map((loan: Loan) => {
+  return createData(loan)
+});
 
 const ProfilePage = () => {
   const dispatch = useAppDispatch();
@@ -108,31 +114,15 @@ const ProfilePage = () => {
     page: 0,
     pageSize: 5,
   });
-  // const { currentUser, loading, error } = useAppSelector((state) => state.userReducer);
-  const { loading, error } = useAppSelector((state) => state.userReducer);
-  // const loans = useAppSelector((state) => state.loansReducer.loans);
+  
+  const {loading, error} = useAppSelector((state) => state.loansReducer);
   const [searchString, setSearchString] = useState("");
   const [selectedLoankId, setSelectedLoanId] = useState<string | null>(null);
   const [isReturnDialogOpen, setReturnDialogOpen] = useState(false);
   const [loanToReturn, setLoanToReturn] = useState<{ id: string } | null>(null);
-  const [loanDetailsLoading, setLoanDetailsLoading] = useState(true);
   
   const userProfile = localStorage.getItem('userProfile');
   const currentUser = userProfile && JSON.parse(userProfile);
-
-
-  const rows = loans && books && loans.map((loan: {id: string, loanBooks: [{bookId: string, title: string}]}) => {
-    const loanBooks = loan.loanBooks
-    for (const loan of loanBooks) {
-      for (const book of books) {
-        if(loan.bookId === book.id){
-          loan.title = book.title
-        }
-      }
-    }
-  
-    return createData(loan.id, loanBooks)
-  });
 
   const handleSearch = (searchString: string) => {
     setSearchString(searchString);
@@ -147,7 +137,7 @@ const ProfilePage = () => {
 
   const handleReturnDialogOpen  = (loan: { id: string }) => {
     setLoanToReturn(loan);
-    console.log("OpenDialog")
+    console.log("OpenDialog for", loan)
     setReturnDialogOpen(true);
   };
 
@@ -157,19 +147,7 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
-    // dispatch(fetchLoggedInUserProfile());
-    dispatch(fetchAllBooks(paginationQuery));
     dispatch(fetchAllUsersLoan({ userId: currentUser?.id }))
-
-    setTimeout(() => {
-      console.log(loanDetailsLoading)
-      if(Array.isArray(rows)){
-        setLoanDetailsLoading(false)
-      }
-    }, 1000);
-	// return () => {
-  //     handleReturnDialogClose();
-  //   };
   }, []);
 
   return (
@@ -234,31 +212,15 @@ const ProfilePage = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-				{/* {rows && rows.map((row: { id: string, details: any }) => (
-				  <Row
-					key={row.id}
-					row={row}
-					openDialog={handleReturnDialogOpen}
-					closeDialog={handleReturnDialogClose}
-				  />
-				))} */}
-        {loanDetailsLoading ? <h1>Loading...</h1>
-        :(rows.map((row: { id: string, details: any }) => (
+        {loading ? <CircularProgress />
+        :(rows && rows.map((row: { id: string, details: LoanBook[] }) => (
           <Row
             key={row.id}
             row={row}
-            openDialog={(loan: { id: string }) => handleReturnDialogOpen(loan)}
+            openDialog={(row: { id: string }) => handleReturnDialogOpen(row)}
             closeDialog={handleReturnDialogClose}
           />
         )))}
-        {/* {!loanDetailsLoading && rows.map((row: { id: string, details: any }) => (
-        <Row
-          key={row.id}
-          row={row}
-          openDialog={(loan: { id: string }) => handleReturnDialogOpen(loan)}
-          closeDialog={handleReturnDialogClose}
-        />
-      ))} */}
 
             </TableBody>
           </Table>

@@ -18,10 +18,14 @@ const initialState: LoanReducer = {
 export interface fetchAllUsersLoanQuery {
   userId?: string;
   loanId?: string;
+  bookTitle?: string;
 }
 
 const ProfileToken = localStorage.getItem("loginResponse");
 const resultToken = ProfileToken && JSON.parse(ProfileToken);
+
+const userloans = localStorage.getItem('userLoans');
+const loans = userloans && JSON.parse(userloans);
 
 let returnLoanId: string|undefined;
 
@@ -48,11 +52,11 @@ export const returnASingleLoan = createAsyncThunk(
   async ({loanId}: fetchAllUsersLoanQuery) => {
     try {
       returnLoanId = loanId
-      const result = await axios.put<{ loans: Loan[] }>(
+      const result = await axios.put<{ loanId: any }>(
         `${baseApi}/Loans/return/${loanId}`, null,
         { headers: { Authorization: `Bearer ${resultToken}` } }
       )
-      return result.data
+      return result.data.loanId
     } catch (e) {
       const error = e as AxiosError
       return error.message
@@ -84,6 +88,7 @@ const loansSlice = createSlice({
             state.loans = []
         } else {
             state.loans = (action.payload as { loans: Loan[]; }).loans;
+            state.loading = false
         }
       })
       .addCase(returnASingleLoan.pending, (state) => {
@@ -97,14 +102,26 @@ const loansSlice = createSlice({
         if (action.payload instanceof AxiosError) {
           state.error = action.payload.message;
         } else {    
-          const updatedLoan = action.payload as { loans: Loan[]; };
+          const updatedLoan = action.payload;
           console.log("updatedLoan", updatedLoan)
-          const updatedLoanId = updatedLoan.loans[0].id; 
-          const loanIndex = state.loans.findIndex(loan => loan.id === updatedLoanId);
+          // const updatedLoanId = updatedLoan; 
+            console.log("loans", loans)
+          const loanIndex = loans.findIndex((loan: Loan) => loan.id === updatedLoan);
+          console.log("loanIndex", loanIndex)
       
           if (loanIndex !== -1) {
-            state.loans[loanIndex] = updatedLoan.loans[0];
-            // state.loans.splice(loanIndex, 1)
+            // // state.loans[loanIndex] = updatedLoan.loans[0];
+            // console.log("loans.splice", loans.splice(loanIndex, 1))
+            // state.loans = loans.splice(loanIndex, 1)
+            // localStorage.setItem('userLoans', JSON.stringify(loans.splice(loanIndex, 1)));
+            const updatedLoans = [...loans]; // Create a shallow copy of the original array
+            updatedLoans.splice(loanIndex, 1); // Remove the old loan from the copied array
+            // updatedLoans.push(updatedLoan); // Add the updated loan to the copied array
+            console.log("updatedLoans", updatedLoans)
+      
+            state.loans = updatedLoans; // Update the state with the new array
+            localStorage.setItem('userLoans', JSON.stringify(updatedLoans));
+            state.loading = false
           }
         }
       })
