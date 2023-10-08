@@ -1,7 +1,8 @@
 export interface UserProfile {
   name: string,
-  email: string,
+  email?: string,
   age: number,
-  avatar: string
+  avatar: string,
+  id: string
   }
   

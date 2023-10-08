@@ -9,10 +9,11 @@ import axios, { Axios, AxiosError } from "axios";
 import { User } from "../../types/User";
 import { baseApi } from "../common/baseApi";
 import { NewUser } from "../../types/NewUser";
+import { UserProfile } from "../../types/UserProfile";
 
 interface UserReducer {
   users: User[];
-  currentUser?: User;
+  currentUser?: User|null;
   newUser: NewUser;
   loading: boolean;
   error: string;
@@ -29,15 +30,16 @@ const initialState: UserReducer = {
     avatar: "",
     age: 0,
   },
-  currentUser: {
-    name: "",
-    email: "",
-    avatar: "",
-    password: "",
-    role: "Client",
-    age: 0,
-    id: "",
-  },
+  // currentUser: {
+  //   name: "",
+  //   email: "",
+  //   avatar: "",
+  //   password: "",
+  //   role: "Client",
+  //   age: 0,
+  //   id: "",
+  // },
+  currentUser: null
 };
 
 interface FetchQuery {
@@ -119,17 +121,10 @@ export const createOneUser = createAsyncThunk(
 
 export const updateUserInfo = createAsyncThunk(
   "updateUserInfo",
-  async ({
-    id,
-    name,
-    age,
-    avatar,
-  }: {
-    id: string;
-    name: string;
-    age: number;
-    avatar: string;
+  async ({ id, name, age, avatar }: {
+    id: string; name: string; age: number; avatar: string;
   }) => {
+    console.log("UserInfo", name, age)
     try {
       const result = await axios.patch<User>(
         `${baseApi}/users/${id}`,
@@ -140,6 +135,7 @@ export const updateUserInfo = createAsyncThunk(
         },
         { headers: { Authorization: `Bearer ${resultToken}` } }
       );
+      console.log("UserInfo After", name, age)
       return result.data;
     } catch (e) {
       const error = e as AxiosError;
@@ -164,6 +160,21 @@ export const changeUserPassword = createAsyncThunk(
     }
   }
 );
+
+export const getCurrentUserProfile = createAsyncThunk(
+  "getCurrentUserProfile",
+  async () => {
+    try {
+      const result = await axios.get<User>(
+        `${baseApi}/users/profile`, { headers: { Authorization: `Bearer ${resultToken}` } }
+      );
+      return result.data;
+    } catch (e) {
+      const error = e as AxiosError;
+      return error
+    }
+  }
+)
 
 const usersSlice = createSlice({
   name: "users",
@@ -227,6 +238,7 @@ const usersSlice = createSlice({
         if (action.payload instanceof AxiosError) {
           state.error = action.payload.message;
         } else {
+          console.log('res =', action.payload)
           state.currentUser = action.payload;
           state.loading = false;
         }
@@ -239,6 +251,21 @@ const usersSlice = createSlice({
         state.loading = true;
       })
       .addCase(changeUserPassword.fulfilled, (state, action) => {
+        if (action.payload instanceof AxiosError) {
+          state.error = action.payload.message;
+        } else {
+          state.currentUser = action.payload;
+        }
+        state.loading = false;
+      })
+      .addCase(getCurrentUserProfile.rejected, (state) => {
+        state.error = "The User is not available at the moment. Please try again later.";
+        state.loading = false;
+      })
+      .addCase(getCurrentUserProfile.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getCurrentUserProfile.fulfilled, (state, action) => {
         if (action.payload instanceof AxiosError) {
           state.error = action.payload.message;
         } else {

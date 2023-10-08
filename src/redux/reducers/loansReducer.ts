@@ -29,7 +29,7 @@ const loans = userloans && JSON.parse(userloans);
 
 let returnLoanId: string|undefined;
 
-export const fetchAllUsersLoan = createAsyncThunk(
+export const fetchAllIndividualUserLoan = createAsyncThunk(
   "fetchAllUsersLoan",
   async ({ userId }: fetchAllUsersLoanQuery) => {
     try {
@@ -74,15 +74,15 @@ const loansSlice = createSlice({
   },
   extraReducers: (build) => {
     build
-      .addCase(fetchAllUsersLoan.pending, (state) => {
+      .addCase(fetchAllIndividualUserLoan.pending, (state) => {
         state.loading = true;
       })
-      .addCase(fetchAllUsersLoan.rejected, (state) => {
+      .addCase(fetchAllIndividualUserLoan.rejected, (state) => {
         state.loading = false;
         state.error =
           "This action cannot be completed at the moment, please try again later";
       })
-      .addCase(fetchAllUsersLoan.fulfilled, (state, action) => {
+      .addCase(fetchAllIndividualUserLoan.fulfilled, (state, action) => {
         if (action.payload instanceof AxiosError) {
             state.error = action.payload.message 
             state.loans = []

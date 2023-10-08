@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import useAppDispatch from '../../hooks/useAppDispatch';
 import useAppSelector from '../../hooks/useAppSelector';
-import { fetchLoggedInUserProfile } from '../../redux/reducers/usersReducer';
+import { fetchLoggedInUserProfile, getCurrentUserProfile } from '../../redux/reducers/usersReducer';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import Header from './Header';
-import { fetchAllUsersLoan, returnASingleLoan } from '../../redux/reducers/loansReducer';
+import { fetchAllIndividualUserLoan, returnASingleLoan } from '../../redux/reducers/loansReducer';
 import { LoanBook } from '../../types/LoanBook';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
@@ -19,6 +19,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import ChangeUserInfo from './subLayer/ChangeUserInfo';
 
   function createData(loan: Loan) {
   return {
@@ -112,14 +113,15 @@ const ProfilePage = () => {
     pageSize: 5,
   });
   
+  const { currentUser } = useAppSelector((state) => state.userReducer)
   const {loading, error} = useAppSelector((state) => state.loansReducer);
   const [searchString, setSearchString] = useState("");
   const [selectedLoankId, setSelectedLoanId] = useState<string | null>(null);
   const [isReturnDialogOpen, setReturnDialogOpen] = useState(false);
   const [loanToReturn, setLoanToReturn] = useState<{ id: string } | null>(null);
   
-  const userProfile = localStorage.getItem('userProfile');
-  const currentUser = userProfile && JSON.parse(userProfile);
+  // const userProfile = localStorage.getItem('userProfile');
+  // const currentUser = userProfile && JSON.parse(userProfile);
 
   const handleSearch = (searchString: string) => {
     setSearchString(searchString);
@@ -144,7 +146,10 @@ const ProfilePage = () => {
   };
 
   useEffect(() => {
-    dispatch(fetchAllUsersLoan({ userId: currentUser?.id }))
+    if (!currentUser) {
+      dispatch(getCurrentUserProfile())
+
+    } else dispatch(fetchAllIndividualUserLoan({ userId: currentUser?.id }))
   }, []);
 
   return (
@@ -179,13 +184,7 @@ const ProfilePage = () => {
                 </Typography>
                 <img src={currentUser?.avatar} alt="Avatar" style={{ maxWidth: '100%', height: 'auto' }} />
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
-                  <Button 
-                    size="small"
-                    variant="outlined" 
-                    color="primary" 
-                    style={{ alignItems: 'center' }}>
-                    Update
-                  </Button>
+                  {currentUser && <ChangeUserInfo name={currentUser.name} age={currentUser.age} id={currentUser.id} avatar={currentUser.avatar}/>}
                   <span style={{ marginRight: "5px" }}></span>
                   <Button 
                     size="small"
