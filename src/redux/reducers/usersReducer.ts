@@ -126,7 +126,7 @@ export const updateUserInfo = createAsyncThunk(
   }) => {
     console.log("UserInfo", name, age)
     try {
-      const result = await axios.patch<User>(
+      await axios.patch<User>(
         `${baseApi}/users/${id}`,
         {
           name: name,
@@ -135,7 +135,9 @@ export const updateUserInfo = createAsyncThunk(
         },
         { headers: { Authorization: `Bearer ${resultToken}` } }
       );
-      console.log("UserInfo After", name, age)
+      const result = await axios.get<User>(
+        `${baseApi}/users/profile`, { headers: { Authorization: `Bearer ${resultToken}` } }
+      );
       return result.data;
     } catch (e) {
       const error = e as AxiosError;
