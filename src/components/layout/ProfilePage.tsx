@@ -20,10 +20,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 
-// const allBooks = localStorage.getItem('allBooks');
-// const books = allBooks && JSON.parse(allBooks);
-
-// function createData(id: string, loanBooks: [{bookId: string, bookTitle: string}]) {
   function createData(loan: Loan) {
   return {
     id: loan.id,
@@ -104,7 +100,8 @@ function Row(props: { row: ReturnType<typeof createData>, openDialog: (loan: { i
 const userloans = localStorage.getItem('userLoans');
 const loans = userloans && JSON.parse(userloans);
 
-const rows = loans.map((loan: Loan) => {
+// const rows = loans.map((loan: Loan) => {
+  const rows = (loans ?? []).map((loan: Loan) => {
   return createData(loan)
 });
 

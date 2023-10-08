@@ -103,6 +103,24 @@ export const createOneUser = createAsyncThunk(
     }
   )
 
+  export const updateUserInfo = createAsyncThunk(
+    "updateUserInfo",
+    async ({ id, name, age, avatar }: { id: string, name: string, age: number, avatar: string }) => {
+      try {
+        const result = await axios.patch<User>(`${baseApi}/users/${id}`, {
+          name: name,
+          age: age,
+          avatar: avatar
+        });
+        return result.data;
+      } catch (e) {
+        const error = e as AxiosError;
+        return error;
+      }
+    }
+  );
+  
+
 const usersSlice = createSlice({
     name: "users",
     initialState,
@@ -152,6 +170,21 @@ const usersSlice = createSlice({
           })
           .addCase(fetchLoggedInUserProfile.rejected, (state) => {
             state.error = "Profile page is not available to the moment, please try again later.";
+          })
+          .addCase(updateUserInfo.rejected, (state) => {
+            state.error = "User information update failed. Please try again later.";
+            state.loading = false;
+          })
+          .addCase(updateUserInfo.pending, (state) => {
+            state.loading = true;
+          })
+          .addCase(updateUserInfo.fulfilled, (state, action) => {
+            if (action.payload instanceof AxiosError) {
+              state.error = action.payload.message
+            } else {
+              state.currentUser = action.payload
+              state.loading = false;
+            }
           })
       },
 })
