@@ -20,6 +20,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import ChangeUserInfo from './subLayer/ChangeUserInfo';
+import ChangeUserPassword from './subLayer/ChangeUserPassword';
 
   function createData(loan: Loan) {
   return {
@@ -186,13 +187,14 @@ const ProfilePage = () => {
                 <div style={{ display: 'flex', justifyContent: 'center', marginTop: '1rem' }}>
                   {currentUser && <ChangeUserInfo name={currentUser.name} age={currentUser.age} id={currentUser.id} avatar={currentUser.avatar}/>}
                   <span style={{ marginRight: "5px" }}></span>
-                  <Button 
+                  {/* <Button 
                     size="small"
                     variant="outlined" 
                     color="primary" 
                     style={{ alignItems: 'center' }}>
                     Change Password
-                  </Button>
+                  </Button> */}
+                  <ChangeUserPassword/>
                 </div>
               </div>
             )}

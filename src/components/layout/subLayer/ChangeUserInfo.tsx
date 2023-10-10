@@ -5,14 +5,8 @@ import { getCurrentUserProfile, updateUserInfo } from '../../../redux/reducers/u
 import useAppSelector from '../../../hooks/useAppSelector';
 import { UserProfile } from '../../../types/UserProfile';
 
-// const SelectGenre: React.FC<GetGenreProps> = ({getGenre}) => {
-
 const ChangeUserInfo: React.FC<UserProfile> = ({name, age, id, avatar}) => {
-    // const storedUserProfile = localStorage.getItem("userProfile");
-    // const user = storedUserProfile && JSON.parse(storedUserProfile)
-
-    // const { currentUser } = useAppSelector((state) => state.userReducer)
-
+   
     const [open, setOpen] = React.useState(false);
     const dispatch = useAppDispatch();
     const [ userName, setUserName ] = useState<UserProfile["name"]>(name)
@@ -46,7 +40,7 @@ const ChangeUserInfo: React.FC<UserProfile> = ({name, age, id, avatar}) => {
         <DialogTitle>Update User Information</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please enter book title and select the genre.
+            Please enter your new information.
           </DialogContentText>
           <TextField
             autoFocus
