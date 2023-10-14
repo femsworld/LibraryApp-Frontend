@@ -138,6 +138,7 @@ export const updateUserInfo = createAsyncThunk(
       const result = await axios.get<User>(
         `${baseApi}/users/profile`, { headers: { Authorization: `Bearer ${resultToken}` } }
       );
+      localStorage.setItem("userProfile", JSON.stringify(result.data))
       return result.data;
     } catch (e) {
       const error = e as AxiosError;
