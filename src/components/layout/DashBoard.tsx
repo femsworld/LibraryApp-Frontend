@@ -4,6 +4,7 @@ import { Container } from "@mui/material";
 import Header from "./Header";
 import { useState } from "react";
 import EditBook from "./subLayer/EditBook";
+import DashBoardUserTable from "./subLayer/DashBoardUserTable";
 
 const DashBoard = () => {
   const [searchString, setSearchString] = useState('');
@@ -20,6 +21,9 @@ const DashBoard = () => {
         <CreateBook />
         </div>
         <DashBoardBookTable />
+      </Container>
+      <Container maxWidth="md" style={{ marginTop: '1rem' }}>
+        <DashBoardUserTable />
       </Container>
     </div>
   );

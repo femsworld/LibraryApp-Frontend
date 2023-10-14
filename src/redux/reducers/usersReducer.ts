@@ -42,7 +42,7 @@ const initialState: UserReducer = {
   currentUser: null
 };
 
-interface FetchQuery {
+export interface FetchQuery {
   page: number;
   per_page: number;
 }
@@ -67,7 +67,7 @@ const resultToken = ProfileToken && JSON.parse(ProfileToken);
 
 export const fetchAllUsers = createAsyncThunk("fetchAllUsers", async () => {
   try {
-    const result = await axios.get<User[]>(`${baseApi}/users`);
+    const result = await axios.get<User[]>(`${baseApi}/users`,{ headers: { Authorization: `Bearer ${resultToken}` } });
     return result.data;
   } catch (e) {
     const error = e as AxiosError;
@@ -178,6 +178,22 @@ export const getCurrentUserProfile = createAsyncThunk(
   }
 )
 
+export const deleteUser = createAsyncThunk(
+  "deleteUser",
+  async (userId: string) => {
+    try {
+      const ProfileToken = localStorage.getItem('loginResponse')
+      const resultToken = ProfileToken && JSON.parse(ProfileToken)
+      await axios.delete<User>(`${baseApi}/users/${userId}`,{ headers: { Authorization: `Bearer ${resultToken}` } } );
+      // return result.data
+      return userId;
+    } catch (e) {
+      const error = e as AxiosError;
+      return error.message;
+    }
+  }
+);
+
 const usersSlice = createSlice({
   name: "users",
   initialState,
@@ -192,7 +208,11 @@ const usersSlice = createSlice({
         if (action.payload instanceof AxiosError) {
           state.error = action.payload.message;
         } else {
-          state.users = action.payload || [];
+          const updatedUsersListToIncludeId = action.payload.users.map((user: User) => {
+            user.id = user.email
+            return user
+          })
+          state.users = updatedUsersListToIncludeId || [];
         }
       })
       .addCase(fetchAllUsers.pending, (state, action) => {
@@ -274,6 +294,17 @@ const usersSlice = createSlice({
           state.currentUser = action.payload;
         }
         state.loading = false;
+      })
+      .addCase(deleteUser.fulfilled, (state, action) => {
+        const deletedBookId = action.payload as string;
+        state.users = state.users.filter((user) => user.id !== deletedBookId);
+      })
+      .addCase(deleteUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(deleteUser.rejected, (state) => {
+        state.error =
+          "User cannot be deleted at this moment, please try again later.";
       });
   },
 });
